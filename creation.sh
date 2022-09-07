@@ -8,7 +8,7 @@ ONLY_RUN=$3
 APP_ID=$4
 
 if [ "run" != "$ONLY_RUN" ]; then
-    python ./_utils/build.py modules."$1".index ./build/$MODULE_FOLDER_NAME/approval.teal ./build/$MODULE_FOLDER_NAME/clear.teal
+    python ./build.py modules."$1".index ./build/$MODULE_FOLDER_NAME/approval.teal ./build/$MODULE_FOLDER_NAME/clear.teal
 
 
     if [ "custom" == "$2" ]; then
