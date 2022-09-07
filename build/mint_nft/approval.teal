@@ -1,0 +1,168 @@
+#pragma version 5
+txn ApplicationID
+int 0
+==
+bnz main_l17
+txn OnCompletion
+int DeleteApplication
+==
+bnz main_l16
+txn OnCompletion
+int UpdateApplication
+==
+bnz main_l15
+txn OnCompletion
+int OptIn
+==
+bnz main_l14
+txn OnCompletion
+int CloseOut
+==
+bnz main_l13
+txn OnCompletion
+int NoOp
+==
+bnz main_l7
+err
+main_l7:
+txna ApplicationArgs 0
+byte "mint"
+==
+bnz main_l12
+txna ApplicationArgs 0
+byte "withdraw"
+==
+bnz main_l10
+err
+main_l10:
+callsub withdraw_3
+main_l11:
+int 0
+return
+main_l12:
+callsub mint_1
+b main_l11
+main_l13:
+int 1
+return
+main_l14:
+int 1
+return
+main_l15:
+int 1
+return
+main_l16:
+int 1
+return
+main_l17:
+int 1
+return
+
+// _mintNft
+mintNft_0:
+itxn_begin
+int acfg
+itxn_field TypeEnum
+int 1
+itxn_field ConfigAssetTotal
+int 0
+itxn_field ConfigAssetDecimals
+txna ApplicationArgs 2
+itxn_field ConfigAssetUnitName
+txna ApplicationArgs 1
+itxn_field ConfigAssetName
+txna ApplicationArgs 3
+itxn_field ConfigAssetURL
+txn Sender
+itxn_field ConfigAssetManager
+itxn_submit
+retsub
+
+// mint
+mint_1:
+gtxn 1 TypeEnum
+int appl
+==
+gtxn 0 TypeEnum
+int pay
+==
+&&
+gtxn 0 Amount
+int 1000
+>=
+&&
+gtxn 0 Receiver
+global CurrentApplicationAddress
+==
+&&
+assert
+callsub mintNft_0
+int 1
+return
+
+// _withdraw
+withdraw_2:
+itxn_begin
+int axfer
+itxn_field TypeEnum
+gtxn 1 Sender
+itxn_field AssetReceiver
+int 1
+itxn_field AssetAmount
+gtxna 2 Assets 0
+itxn_field XferAsset
+itxn_submit
+retsub
+
+// withdraw
+withdraw_3:
+int 0
+txna Assets 0
+asset_holding_get AssetBalance
+store 1
+store 0
+gtxn 0 TypeEnum
+int pay
+==
+gtxn 0 Amount
+int 1000
+>=
+&&
+gtxn 0 Receiver
+global CurrentApplicationAddress
+==
+&&
+gtxn 1 TypeEnum
+int axfer
+==
+&&
+gtxn 1 AssetReceiver
+gtxn 1 Sender
+==
+&&
+gtxn 1 AssetAmount
+int 0
+==
+&&
+gtxn 2 TypeEnum
+int appl
+==
+&&
+global GroupSize
+int 3
+==
+&&
+gtxn 2 NumAppArgs
+int 1
+==
+&&
+gtxn 2 NumAssets
+int 1
+==
+&&
+assert
+load 1
+assert
+callsub withdraw_2
+int 1
+return

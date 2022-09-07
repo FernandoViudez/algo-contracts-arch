@@ -1,0 +1,48 @@
+{
+    "name": "Mint",
+    "desc": "Interface for basic contract to mint pure nfts. This nfts will be the official NFT's from Fer's platform.",
+    "methods": [
+        {
+            "name": "mint",
+            "desc": "Mint pute NFT's",
+            "args": [
+                {
+                    "type": "bytes",
+                    "name": "mint",
+                    "desc": "Name of the action todo"
+                },
+                {
+                    "type": "str",
+                    "name": "NFT name",
+                    "desc": "Name of the NFT"
+                },
+                {
+                    "type": "str",
+                    "name": "Asset unit name",
+                    "desc": "Unit name of the asset"
+                },
+                {
+                    "type": "str",
+                    "name": "Asset URL",
+                    "desc": "Url of the asset"
+                }
+            ]
+        },
+        {
+            "name": "withdraw",
+            "desc": "Withdraw an specific nft",
+            "args": [
+                {
+                    "type": "str",
+                    "name": "withdraw",
+                    "desc": "Name of the action todo"
+                },
+                {
+                    "type": "int",
+                    "name": "--foreign-asset",
+                    "desc": "Asset-id to withdraw. Must be sent in foreign asset params of the app call"
+                }
+            ]
+        }
+    ]
+}

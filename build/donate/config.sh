@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+
+## Here goes your current smart contract args
+DONATER_ACCOUNT=AMABGP7PJD72GFV5WN6O6FK6BUPN7DH7VOGFEOO3EKPIKVJYHSV6AMCDXI
+DONATION_AMOUNT=100000 # in microalgos

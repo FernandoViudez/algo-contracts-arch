@@ -1,0 +1,17 @@
+{
+    "name": "Donation",
+    "desc": "Interface for basic contract to receive donations from anywhere. Donate for the cause and measure your generosity, SC will remember only the most generous person. This smart contract follows the ARC-03 convention.",
+    "methods": [
+        {
+            "name": "donate",
+            "desc": "Receive algos from algorand address",
+            "args": [
+                {
+                    "type": "bytes",
+                    "name": "donate",
+                    "desc": "Name of the action todo"
+                }
+            ]
+        }
+    ]
+}

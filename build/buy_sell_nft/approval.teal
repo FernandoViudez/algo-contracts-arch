@@ -1,0 +1,251 @@
+#pragma version 5
+txn ApplicationID
+int 0
+==
+bnz main_l17
+txn OnCompletion
+int DeleteApplication
+==
+bnz main_l16
+txn OnCompletion
+int UpdateApplication
+==
+bnz main_l15
+txn OnCompletion
+int OptIn
+==
+bnz main_l14
+txn OnCompletion
+int CloseOut
+==
+bnz main_l13
+txn OnCompletion
+int NoOp
+==
+bnz main_l7
+err
+main_l7:
+txna ApplicationArgs 0
+byte "buy"
+==
+bnz main_l12
+txna ApplicationArgs 0
+byte "publish"
+==
+bnz main_l10
+err
+main_l10:
+callsub publishNft_6
+main_l11:
+int 0
+return
+main_l12:
+callsub buyNft_3
+b main_l11
+main_l13:
+int 1
+return
+main_l14:
+int 1
+return
+main_l15:
+int 1
+return
+main_l16:
+int 1
+return
+main_l17:
+byte "nft_id"
+txna ApplicationArgs 0
+btoi
+app_global_put
+byte "nft_price"
+txna ApplicationArgs 1
+btoi
+app_global_put
+byte "nft_owner"
+txn Sender
+app_global_put
+int 1
+return
+
+// _sendAlgosToOwner
+sendAlgosToOwner_0:
+itxn_begin
+int pay
+itxn_field TypeEnum
+byte "nft_price"
+app_global_get
+itxn_field Amount
+txna Accounts 1
+itxn_field Receiver
+int 0
+itxn_field Fee
+itxn_submit
+retsub
+
+// _sendAsaToBuyer
+sendAsaToBuyer_1:
+itxn_begin
+int axfer
+itxn_field TypeEnum
+int 1
+itxn_field AssetAmount
+txn Sender
+itxn_field AssetReceiver
+txna Assets 0
+itxn_field XferAsset
+int 0
+itxn_field Fee
+itxn_submit
+retsub
+
+// _validateAsaOptInTxn
+validateAsaOptInTxn_2:
+gtxn 1 TypeEnum
+int axfer
+==
+gtxn 1 AssetAmount
+int 0
+==
+&&
+gtxn 1 AssetReceiver
+gtxn 1 Sender
+==
+&&
+byte "nft_id"
+app_global_get
+txna Assets 0
+==
+&&
+assert
+retsub
+
+// buyNft
+buyNft_3:
+txn Sender
+txna Assets 0
+asset_holding_get AssetBalance
+store 1
+store 0
+txn TypeEnum
+int appl
+==
+txn NumAssets
+int 1
+==
+&&
+txn Fee
+int 0
+==
+&&
+gtxn 0 TypeEnum
+int pay
+==
+&&
+gtxn 0 Amount
+byte "nft_price"
+app_global_get
+>=
+&&
+gtxn 0 Fee
+global MinTxnFee
+int 4
+*
+>=
+&&
+txn Sender
+byte "nft_owner"
+app_global_get
+!=
+&&
+assert
+load 1
+int 0
+==
+bz buyNft_3_l2
+callsub validateAsaOptInTxn_2
+buyNft_3_l2:
+callsub sendAlgosToOwner_0
+callsub sendAsaToBuyer_1
+int 1
+return
+
+// hasAsset
+hasAsset_4:
+store 3
+store 2
+load 2
+load 3
+asset_holding_get AssetBalance
+store 5
+store 4
+load 5
+retsub
+
+// optInAsset
+optInAsset_5:
+itxn_begin
+int axfer
+itxn_field TypeEnum
+int 0
+itxn_field AssetAmount
+txna Assets 0
+itxn_field XferAsset
+global CurrentApplicationAddress
+itxn_field AssetReceiver
+itxn_submit
+retsub
+
+// publishNft
+publishNft_6:
+global CurrentApplicationAddress
+byte "nft_id"
+app_global_get
+callsub hasAsset_4
+bz publishNft_6_l2
+int 0
+return
+publishNft_6_l2:
+txn NumAssets
+int 1
+==
+txn Sender
+global CreatorAddress
+==
+&&
+gtxn 0 TypeEnum
+int pay
+==
+&&
+gtxn 0 Receiver
+global CurrentApplicationAddress
+==
+&&
+gtxn 0 Amount
+int 200000
+int 1000
++
+==
+&&
+gtxn 2 TypeEnum
+int axfer
+==
+&&
+gtxn 2 AssetReceiver
+global CurrentApplicationAddress
+==
+&&
+gtxn 2 XferAsset
+byte "nft_id"
+app_global_get
+==
+&&
+gtxn 2 AssetAmount
+int 1
+==
+&&
+assert
+callsub optInAsset_5
+int 1
+return
