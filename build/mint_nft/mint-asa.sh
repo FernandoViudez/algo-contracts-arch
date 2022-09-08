@@ -1,4 +1,3 @@
-#!/usr/bin/env bash
 
 # create mint app call txn 
 goal app call \
@@ -16,6 +15,7 @@ goal clerk send \
     -t "$APP_ACCOUNT" \
     -f "$MINTER_REQUEST_ACCOUNT" \
     -o mint-payment.tx
+
 
 # group transactions
 # order matters here
@@ -35,18 +35,3 @@ cat mint-signed-0.tx mint-signed-1.tx > mint-signed-final.tx
 # send transaction
 echo "Sending txn to blockchain..."
 goal clerk rawsend -f mint-signed-final.tx
-
-# Print some status
-echo -e "\n###### APP INFO ######\nID ~> $APP_ID \n ADDR ~> $APP_ACCOUNT"
-
-echo -e "\n###### MINTER REQUEST ACCOUNT BALANCE ######"
-goal account balance -a $MINTER_REQUEST_ACCOUNT
-
-echo -e "\n###### APP BALANCE ######"
-goal account balance -a $APP_ACCOUNT
-
-echo -e "\n###### APP NFT HOLDING INFO ######"
-goal account info -a $APP_ACCOUNT
-
-
-echo -e "\n"

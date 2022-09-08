@@ -26,7 +26,8 @@ def mint():
             And(
                 Gtxn[1].type_enum() == TxnType.ApplicationCall,
                 Gtxn[0].type_enum() == TxnType.Payment,
-                Gtxn[0].amount() >= Int(1000),
+                Gtxn[0].amount() >= Add(
+                    Int(100000), Global.min_txn_fee() * Int(1)),
                 Gtxn[0].receiver() == Global.current_application_address(),
             )
         ),

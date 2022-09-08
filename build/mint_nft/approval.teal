@@ -88,7 +88,11 @@ int pay
 ==
 &&
 gtxn 0 Amount
-int 1000
+int 100000
+global MinTxnFee
+int 1
+*
++
 >=
 &&
 gtxn 0 Receiver

@@ -52,6 +52,18 @@ main_l15:
 int 1
 return
 main_l16:
+txn Sender
+global CreatorAddress
+==
+txn Fee
+global MinTxnFee
+int 3
+*
+==
+&&
+assert
+callsub optOutAsa_7
+callsub clawbackBalanceAndCloseAccount_8
 int 1
 return
 main_l17:
@@ -249,3 +261,33 @@ assert
 callsub optInAsset_5
 int 1
 return
+
+// optOutAsa
+optOutAsa_7:
+itxn_begin
+int axfer
+itxn_field TypeEnum
+global CurrentApplicationAddress
+itxn_field AssetCloseTo
+txna Assets 0
+itxn_field XferAsset
+int 0
+itxn_field AssetAmount
+global CurrentApplicationAddress
+itxn_field AssetReceiver
+int 0
+itxn_field Fee
+itxn_submit
+retsub
+
+// clawbackBalanceAndCloseAccount
+clawbackBalanceAndCloseAccount_8:
+itxn_begin
+int pay
+itxn_field TypeEnum
+txn Sender
+itxn_field CloseRemainderTo
+int 0
+itxn_field Fee
+itxn_submit
+retsub

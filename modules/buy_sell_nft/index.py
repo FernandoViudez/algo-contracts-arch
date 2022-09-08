@@ -3,6 +3,7 @@ from pyteal import *
 from pyteal.ast import *
 from modules.buy_sell_nft.src.buy import *
 from modules.buy_sell_nft.src.publish import *
+from modules.buy_sell_nft.src.remove_from_sell import *
 
 
 def handle_event():
@@ -23,11 +24,7 @@ def approval() -> Expr:
             App.globalPut(nft_owner, Txn.sender()),
             Approve()
         )],
-        [Txn.on_completion() == OnComplete.DeleteApplication, Seq(
-            # TODO: clawback asset to owner
-            # return minimal smart contract required balance
-            Approve()
-        )],
+        [Txn.on_completion() == OnComplete.DeleteApplication, removeFromSale()],
         [Txn.on_completion() == OnComplete.UpdateApplication, Approve()],
         [Txn.on_completion() == OnComplete.OptIn, Approve()],
         [Txn.on_completion() == OnComplete.CloseOut, Approve()],
