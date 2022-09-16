@@ -5,7 +5,7 @@ import sys
 
 
 def application(pyteal: Expr) -> str:
-    return compileTeal(pyteal, mode=Mode.Application, version=5)
+    return compileTeal(pyteal, mode=Mode.Application, version=6)
 
 
 if __name__ == "__main__":

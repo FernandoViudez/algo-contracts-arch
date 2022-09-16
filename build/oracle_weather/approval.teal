@@ -1,0 +1,229 @@
+#pragma version 6
+txn ApplicationID
+int 0
+==
+bnz main_l19
+txn OnCompletion
+int DeleteApplication
+==
+bnz main_l18
+txn OnCompletion
+int UpdateApplication
+==
+bnz main_l17
+txn OnCompletion
+int OptIn
+==
+bnz main_l16
+txn OnCompletion
+int CloseOut
+==
+bnz main_l15
+txn OnCompletion
+int NoOp
+==
+bnz main_l7
+err
+main_l7:
+txna ApplicationArgs 0
+byte "beginBet"
+==
+bnz main_l14
+txna ApplicationArgs 0
+byte "bet"
+==
+bnz main_l13
+txna ApplicationArgs 0
+byte "solve"
+==
+bnz main_l11
+err
+main_l11:
+callsub solve_3
+main_l12:
+int 0
+return
+main_l13:
+callsub bet_1
+b main_l12
+main_l14:
+callsub beginBet_4
+b main_l12
+main_l15:
+int 1
+return
+main_l16:
+int 1
+return
+main_l17:
+int 1
+return
+main_l18:
+int 1
+return
+main_l19:
+byte "creator_opt"
+byte ""
+app_global_put
+byte "creator_money"
+int 0
+app_global_put
+byte "gambler_money"
+int 0
+app_global_put
+byte "gambler_opt"
+byte ""
+app_global_put
+byte "gambler_addr"
+byte ""
+app_global_put
+byte "bet_date"
+int 0
+app_global_put
+int 1
+return
+
+// stackBetIntoServer
+stackBetIntoServer_0:
+itxn_begin
+int pay
+itxn_field TypeEnum
+txna Accounts 1
+itxn_field Receiver
+int 2000
+itxn_field Amount
+int 0
+itxn_field Fee
+itxn_submit
+retsub
+
+// bet
+bet_1:
+txna ApplicationArgs 1
+byte "sunny"
+==
+txna ApplicationArgs 1
+byte "raining"
+==
+||
+assert
+byte "creator_opt"
+app_global_get
+txna ApplicationArgs 1
+!=
+assert
+gtxn 1 TypeEnum
+int pay
+==
+assert
+gtxn 1 Amount
+int 102000
+>=
+assert
+gtxn 1 Receiver
+global CurrentApplicationAddress
+==
+assert
+gtxn 1 Sender
+global CreatorAddress
+!=
+assert
+byte "gambler_addr"
+txn Sender
+app_global_put
+byte "gambler_money"
+gtxn 1 Amount
+int 2000
+-
+app_global_put
+byte "gambler_opt"
+txna ApplicationArgs 1
+app_global_put
+callsub stackBetIntoServer_0
+int 1
+return
+
+// sendMoneyToWinner
+sendMoneyToWinner_2:
+store 0
+itxn_begin
+int pay
+itxn_field TypeEnum
+byte "creator_money"
+app_global_get
+byte "gambler_money"
+app_global_get
++
+itxn_field Amount
+load 0
+itxn_field Receiver
+int 0
+itxn_field Fee
+itxn_submit
+retsub
+
+// solve
+solve_3:
+txn Sender
+addr 5FRCBMIIIY7QIVUUMII5YP536ATXDA472C4KZXSCFLWV7UZZUR2R4K5GOY
+==
+assert
+byte "creator_opt"
+app_global_get
+txna ApplicationArgs 1
+==
+bnz solve_3_l2
+txna Accounts 2
+callsub sendMoneyToWinner_2
+b solve_3_l3
+solve_3_l2:
+txna Accounts 1
+callsub sendMoneyToWinner_2
+solve_3_l3:
+int 1
+return
+
+// beginBet
+beginBet_4:
+txn Sender
+global CreatorAddress
+==
+txna ApplicationArgs 1
+byte "sunny"
+==
+txna ApplicationArgs 1
+byte "raining"
+==
+||
+&&
+gtxn 1 TypeEnum
+int pay
+==
+&&
+gtxn 1 Amount
+int 200000
+>=
+&&
+gtxn 1 Receiver
+global CurrentApplicationAddress
+==
+&&
+gtxn 1 Sender
+global CreatorAddress
+==
+&&
+assert
+byte "creator_money"
+gtxn 1 Amount
+int 100000
+-
+app_global_put
+byte "creator_opt"
+txna ApplicationArgs 1
+app_global_put
+byte "bet_date"
+txna ApplicationArgs 2
+btoi
+app_global_put
+int 1
+return

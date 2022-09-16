@@ -7,6 +7,10 @@ goal app call \
     --app-arg "str:DarkNight" \
     --app-arg "str:DKN" \
     --app-arg "str:https://images.fineartamerica.com/images/artworkimages/mediumlarge/2/dark-night-delobbocom.jpg" \
+    --app-arg "int:10000" \
+    --app-arg "int:4" \
+    --app-account "TWFW6AENUYBM2AV7UW3CU2ISTIZ3QROI2WZQFQYD3QHCFVW3HYPDLHA7GA" \
+    --fee 0 \
     -o mint-call.tx
 
 # create payment transaction
@@ -14,6 +18,7 @@ goal clerk send \
     -a "$MINIMUM_REQUIRED_BALANCE" \
     -t "$APP_ACCOUNT" \
     -f "$MINTER_REQUEST_ACCOUNT" \
+    --fee 3000 \
     -o mint-payment.tx
 
 
