@@ -24,3 +24,5 @@
 2. server will do an smart contract call when txn inside the stack reaches the date & hour of the bet
     - server will pass the current weather & smart contract will solve the bet
 
+## Server oracle url:
+https://github.com/FernandoViudez/weather-algoracle
