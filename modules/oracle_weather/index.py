@@ -20,7 +20,12 @@ def handle_event():
 def approval() -> Expr:
     return Cond(
         [Txn.application_id() == Int(0), createBet()],
-        [Txn.on_completion() == OnComplete.DeleteApplication, Approve()],
+        [Txn.on_completion() == OnComplete.DeleteApplication, Seq(
+            Assert(
+                Txn.sender() == App.globalGet(sv_addr)
+            ),
+            Approve()
+        )],
         [Txn.on_completion() == OnComplete.UpdateApplication, Approve()],
         [Txn.on_completion() == OnComplete.OptIn, Approve()],
         [Txn.on_completion() == OnComplete.CloseOut, Approve()],

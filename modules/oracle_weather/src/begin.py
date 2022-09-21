@@ -19,6 +19,7 @@ def beginBet():
                 Gtxn[1].amount() >= Int(200000),
                 Gtxn[1].receiver() == Global.current_application_address(),
                 Gtxn[1].sender() == Global.creator_address(),
+                # Int(Txn.application_args[2]) >= "now + 1day"
             ),
         ),
         App.globalPut(creator_money, Minus(Gtxn[1].amount(), Int(100000))),

@@ -59,10 +59,21 @@ main_l17:
 int 1
 return
 main_l18:
+txn Sender
+byte "sv_addr"
+app_global_get
+==
+assert
 int 1
 return
 main_l19:
 byte "creator_opt"
+byte ""
+app_global_put
+byte "gambler_opt"
+byte ""
+app_global_put
+byte "gambler_addr"
 byte ""
 app_global_put
 byte "creator_money"
@@ -71,14 +82,11 @@ app_global_put
 byte "gambler_money"
 int 0
 app_global_put
-byte "gambler_opt"
-byte ""
-app_global_put
-byte "gambler_addr"
-byte ""
-app_global_put
 byte "bet_date"
 int 0
+app_global_put
+byte "sv_addr"
+txna ApplicationArgs 0
 app_global_put
 int 1
 return
@@ -149,14 +157,8 @@ store 0
 itxn_begin
 int pay
 itxn_field TypeEnum
-byte "creator_money"
-app_global_get
-byte "gambler_money"
-app_global_get
-+
-itxn_field Amount
 load 0
-itxn_field Receiver
+itxn_field CloseRemainderTo
 int 0
 itxn_field Fee
 itxn_submit
@@ -165,7 +167,8 @@ retsub
 // solve
 solve_3:
 txn Sender
-addr 5FRCBMIIIY7QIVUUMII5YP536ATXDA472C4KZXSCFLWV7UZZUR2R4K5GOY
+byte "sv_addr"
+app_global_get
 ==
 assert
 byte "creator_opt"
