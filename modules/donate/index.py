@@ -1,7 +1,7 @@
 from pyteal import *
 from pyteal.ast import *
-from modules.donate.src.donate import donate
-from modules.donate.src.generous_person import getMostGenerousPerson
+from modules.donate.src.donate import *
+from modules.donate.src.generous_person import *
 
 
 def handle_event() -> Expr:
@@ -14,7 +14,11 @@ def handle_event() -> Expr:
 
 def approval() -> Expr:
     return Cond(
-        [Txn.application_id() == Int(0), Approve()],
+        [Txn.application_id() == Int(0), Seq(
+            App.globalPut(most_generous_person, Bytes("")),
+            App.globalPut(max_donated, Int(0)),
+            Approve(),
+        )],
         [Txn.on_completion() == OnComplete.DeleteApplication, Approve()],
         [Txn.on_completion() == OnComplete.UpdateApplication, Approve()],
         [Txn.on_completion() == OnComplete.OptIn, Approve()],

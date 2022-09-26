@@ -85,5 +85,11 @@ main_l18:
 int 1
 return
 main_l19:
+byte "most_generous_person"
+byte ""
+app_global_put
+byte "max_donated"
+int 0
+app_global_put
 int 1
 return
